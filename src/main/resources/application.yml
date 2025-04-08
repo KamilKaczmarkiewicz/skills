@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: skill
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skilldb
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: true
+
+logging:
+  level:
+    com.example.skill: debug
