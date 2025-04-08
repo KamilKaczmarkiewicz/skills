@@ -25,6 +25,7 @@ repositories {
 
 ext {
     mapStruictVersion = "1.6.3"
+    testcontainersVersion = "1.20.6"
 }
 
 dependencies {
@@ -45,6 +46,9 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+    testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
 }
 
 tasks.named('test') {
