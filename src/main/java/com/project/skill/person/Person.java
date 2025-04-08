@@ -18,8 +18,15 @@ class Person {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String surname;
+
+    @Column(nullable = false)
     private String company;
+
+    @Column(nullable = false)
     private LocalDate birthDate;
 }
