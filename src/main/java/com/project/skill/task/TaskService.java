@@ -1,5 +1,6 @@
 package com.project.skill.task;
 
+import com.project.skill.common.TimeHelper;
 import com.project.skill.common.exception.NotFoundException;
 import com.project.skill.person.dto.PersonDto;
 import com.project.skill.task.dto.TaskDto;
@@ -16,11 +17,12 @@ import static com.project.skill.common.exception.NotFoundException.ObjectType.TA
 
 @Service
 @RequiredArgsConstructor
-class TaskService implements TaskFacade{
+class TaskService implements TaskFacade {
 
     private final TaskRepository repository;
     private final TaskMapper taskMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TimeHelper timeHelper;
 
 
     @Override
@@ -54,11 +56,7 @@ class TaskService implements TaskFacade{
 
     @Cacheable(value = "tasks", key = "#id")
     TaskDto getTaskById(UUID id) {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        timeHelper.sleep(500);
         return repository.findByIdWithComparableObjects(id)
                 .map(taskMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(TASK, id));

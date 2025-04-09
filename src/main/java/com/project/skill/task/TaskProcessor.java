@@ -1,5 +1,6 @@
 package com.project.skill.task;
 
+import com.project.skill.common.TimeHelper;
 import com.project.skill.task.dto.TaskDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ class TaskProcessor {
 
     private final TaskCacheService taskCacheService;
     private final ComparableObjectRepository comparableObjectRepository;
+    private final TimeHelper timeHelper;
 
     @EventListener
     @Async
@@ -21,11 +23,7 @@ class TaskProcessor {
         log.info("Start calculateTaskSimilarity for taskId: {}", taskDto.id());
         var steps = 5;
         for (int i = 0; i < steps; i++) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            timeHelper.sleep(3000);
             taskCacheService.updateProgressWithEviction(taskDto.id(), ((i + 1) * 100.0) / steps);
         }
         for (var comparable : taskDto.comparableObjects()) {

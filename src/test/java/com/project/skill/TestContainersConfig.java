@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @AutoConfigureMockMvc
 public abstract class TestContainersConfig {
 
+    @Autowired
+    protected TestTimeHelper timeHelper;
+
     @Container
     public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("testdb")

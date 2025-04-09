@@ -1,6 +1,8 @@
 package com.project.skill.task;
 
 
+import com.project.skill.TestTimeHelper;
+import com.project.skill.common.TimeHelper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,7 +17,8 @@ class TaskProcessorTest {
 
     private final TaskCacheService taskCacheService = mock(TaskCacheService.class);
     private final ComparableObjectRepository comparableObjectRepository = mock(ComparableObjectRepository.class);
-    private final TaskProcessor calculator = new TaskProcessor(taskCacheService, comparableObjectRepository);
+    private final TimeHelper timeHelper = new TestTimeHelper();
+    private final TaskProcessor calculator = new TaskProcessor(taskCacheService, comparableObjectRepository,timeHelper);
 
     static Stream<Arguments> similarityData() {
         return Stream.of(
