@@ -1,8 +1,9 @@
 package com.project.skill.person;
 
 import com.project.skill.person.dto.CreatePersonRequest;
+import com.project.skill.person.dto.DeletePersonResponse;
 import com.project.skill.person.dto.PersonDto;
-import com.project.skill.person.dto.UpdatePersonRequest;
+import com.project.skill.person.dto.PersonWithTaskResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -32,7 +33,7 @@ class PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    PersonDto createPerson(@Valid @RequestBody CreatePersonRequest request){
+    PersonWithTaskResponse createPerson(@Valid @RequestBody CreatePersonRequest request){
         return personService.createPerson(request);
     }
 
@@ -50,13 +51,12 @@ class PersonController {
     }
 
     @PutMapping("/{id}")
-    PersonDto updatePerson(@PathVariable UUID id, @Valid @RequestBody UpdatePersonRequest request){
+    PersonWithTaskResponse updatePerson(@PathVariable UUID id, @Valid @RequestBody CreatePersonRequest request){
         return personService.updatePerson(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deletePerson(@PathVariable UUID id){
-        personService.deletePerson(id);
+    DeletePersonResponse deletePerson(@PathVariable UUID id){
+        return personService.deletePerson(id);
     }
 }

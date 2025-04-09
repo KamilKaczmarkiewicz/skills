@@ -3,8 +3,7 @@ package com.project.skill.person;
 
 import com.project.skill.TestContainersConfig;
 import com.project.skill.person.dto.CreatePersonRequest;
-import com.project.skill.person.dto.PersonDto;
-import com.project.skill.person.dto.UpdatePersonRequest;
+import com.project.skill.person.dto.PersonWithTaskResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -37,15 +36,15 @@ class PersonControllerIntegrationTest extends TestContainersConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createReqJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is("Jon")))
-                .andExpect(jsonPath("$.surname", is("Wood")))
-                .andExpect(jsonPath("$.company", is("Beans")))
-                .andExpect(jsonPath("$.birthDate", is("1992-01-21")))
+                .andExpect(jsonPath("$.person.name", is("Jon")))
+                .andExpect(jsonPath("$.person.surname", is("Wood")))
+                .andExpect(jsonPath("$.person.company", is("Beans")))
+                .andExpect(jsonPath("$.person.birthDate", is("1992-01-21")))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        var createdPerson = mapper.readValue(createResp, PersonDto.class);
-        var personId = createdPerson.id();
+        var createdPerson = mapper.readValue(createResp, PersonWithTaskResponse.class);
+        var personId = createdPerson.person().id();
 
         // Step 3: GET the newly created person by ID and verify the returned data.
         mvc.perform(get("%s/%s".formatted(BASE_URL, personId)))
@@ -62,15 +61,16 @@ class PersonControllerIntegrationTest extends TestContainersConfig {
                 .andExpect(jsonPath("$.content", hasSize(1)));
 
         // Step 5: Update the created person using PUT.
-        var updateReq = new UpdatePersonRequest("John", "Woody", "Beans2");
+        var updateReq = new CreatePersonRequest("John", "Woody", "Beans2", LocalDate.of(1993, 2, 21));
         var updateReqJson = mapper.writeValueAsString(updateReq);
         mvc.perform(put("%s/%s".formatted(BASE_URL, personId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateReqJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("John")))
-                .andExpect(jsonPath("$.surname", is("Woody")))
-                .andExpect(jsonPath("$.company", is("Beans2")))
+                .andExpect(jsonPath("$.person.name", is("John")))
+                .andExpect(jsonPath("$.person.surname", is("Woody")))
+                .andExpect(jsonPath("$.person.company", is("Beans2")))
+                .andExpect(jsonPath("$.person.birthDate", is("1993-02-21")))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -84,7 +84,7 @@ class PersonControllerIntegrationTest extends TestContainersConfig {
 
         // Step 7: Delete the person using DELETE.
         mvc.perform(delete("%s/%s".formatted(BASE_URL, personId)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         // Step 8: GET all persons again and expect the list to be empty.
         mvc.perform(get(BASE_URL))

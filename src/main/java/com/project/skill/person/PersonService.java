@@ -2,8 +2,10 @@ package com.project.skill.person;
 
 import com.project.skill.common.exception.NotFoundException;
 import com.project.skill.person.dto.CreatePersonRequest;
+import com.project.skill.person.dto.DeletePersonResponse;
 import com.project.skill.person.dto.PersonDto;
-import com.project.skill.person.dto.UpdatePersonRequest;
+import com.project.skill.person.dto.PersonWithTaskResponse;
+import com.project.skill.task.TaskFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,12 +24,16 @@ class PersonService {
 
     private final PersonRepository repository;
     private final PersonMapper personMapper;
+    private final TaskFacade taskFacade;
 
-    PersonDto createPerson(CreatePersonRequest request) {
+    @Transactional
+    PersonWithTaskResponse createPerson(CreatePersonRequest request) {
         log.debug("Creating new a person: {}", request);
         var person = personMapper.toPerson(request);
         person = repository.save(person);
-        return personMapper.toDto(person);
+        var personDto = personMapper.toDto(person);
+        var task = taskFacade.createTaskForNewPerson(personDto);
+        return new PersonWithTaskResponse(personDto, task.id());
     }
 
     Page<PersonDto> getAllPersons(Pageable pageable) {
@@ -42,19 +48,27 @@ class PersonService {
     }
 
     @Transactional
-    PersonDto updatePerson(UUID id, UpdatePersonRequest request) {
-        var existingPerson = repository.findByIdForUpdateById(id)
+    PersonWithTaskResponse updatePerson(UUID id, CreatePersonRequest request) {
+        var existingPerson = repository.findByIdWithLock(id)
                 .orElseThrow(() -> createNotFoundException(id));
+        var oldPersonDto = personMapper.toDto(existingPerson);
         personMapper.updatePersonFromDto(request, existingPerson);
         var updatedPerson = repository.save(existingPerson);
-        return personMapper.toDto(updatedPerson);
+        var newPersonDto = personMapper.toDto(updatedPerson);
+        var task = taskFacade.createTaskForUpdatedPerson(newPersonDto, oldPersonDto);
+        return new PersonWithTaskResponse(newPersonDto, task.id());
     }
 
     private NotFoundException createNotFoundException(UUID id) {
-        return new NotFoundException(PERSON, id.toString());
+        return new NotFoundException(PERSON, id);
     }
 
-    void deletePerson(UUID id) {
-        repository.deleteById(id);
+    @Transactional
+    DeletePersonResponse deletePerson(UUID id) {
+        var person = repository.findByIdWithLock(id)
+                .orElseThrow(() -> createNotFoundException(id));
+        var task = taskFacade.createTaskForDeletedPerson(personMapper.toDto(person));
+        repository.delete(person);
+        return new DeletePersonResponse(task.id());
     }
 }

@@ -2,7 +2,6 @@ package com.project.skill.person;
 
 import com.project.skill.person.dto.CreatePersonRequest;
 import com.project.skill.person.dto.PersonDto;
-import com.project.skill.person.dto.UpdatePersonRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
@@ -14,6 +13,6 @@ interface PersonMapper {
 
     Person toPerson(CreatePersonRequest createPersonRequest);
 
-    void updatePersonFromDto(UpdatePersonRequest updateRequest, @MappingTarget Person person);
+    void updatePersonFromDto(CreatePersonRequest updateRequest, @MappingTarget Person person);
 
 }

@@ -15,5 +15,5 @@ interface PersonRepository extends JpaRepository<Person, UUID> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Person p WHERE p.id = :id")
-    Optional<Person> findByIdForUpdateById(@Param("id") UUID id);
+    Optional<Person> findByIdWithLock(@Param("id") UUID id);
 }
