@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 class TaskProcessor {
 
-    private final TaskRepository taskRepository;
+    private final TaskCacheService taskCacheService;
     private final ComparableObjectRepository comparableObjectRepository;
 
     @EventListener
@@ -22,11 +22,11 @@ class TaskProcessor {
         var steps = 5;
         for (int i = 0; i < steps; i++) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            taskRepository.updateProgress(taskDto.id(), ((i + 1) * 100.0) / steps);
+            taskCacheService.updateProgressWithEviction(taskDto.id(), ((i + 1) * 100.0) / steps);
         }
         for (var comparable : taskDto.comparableObjects()) {
             var similarity = calculateSimilarity(comparable.previousValue(), comparable.newValue());

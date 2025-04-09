@@ -13,9 +13,9 @@ import static org.mockito.Mockito.mock;
 
 class TaskProcessorTest {
 
-    private final TaskRepository taskRepository = mock(TaskRepository.class);
+    private final TaskCacheService taskCacheService = mock(TaskCacheService.class);
     private final ComparableObjectRepository comparableObjectRepository = mock(ComparableObjectRepository.class);
-    private final TaskProcessor calculator = new TaskProcessor(taskRepository, comparableObjectRepository);
+    private final TaskProcessor calculator = new TaskProcessor(taskCacheService, comparableObjectRepository);
 
     static Stream<Arguments> similarityData() {
         return Stream.of(

@@ -4,6 +4,7 @@ import com.project.skill.common.exception.NotFoundException;
 import com.project.skill.person.dto.PersonDto;
 import com.project.skill.task.dto.TaskDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +52,13 @@ class TaskService implements TaskFacade{
                 .map(taskMapper::toDto);
     }
 
+    @Cacheable(value = "tasks", key = "#id")
     TaskDto getTaskById(UUID id) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return repository.findByIdWithComparableObjects(id)
                 .map(taskMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(TASK, id));
