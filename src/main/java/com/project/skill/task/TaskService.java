@@ -4,6 +4,7 @@ import com.project.skill.common.exception.NotFoundException;
 import com.project.skill.person.dto.PersonDto;
 import com.project.skill.task.dto.TaskDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ class TaskService implements TaskFacade{
 
     private final TaskRepository repository;
     private final TaskMapper taskMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Override
@@ -29,8 +31,9 @@ class TaskService implements TaskFacade{
     @Override
     public TaskDto createTaskForUpdatedPerson(PersonDto newPerson, PersonDto oldPerson) {
         var task = repository.save(taskMapper.toTask(newPerson, oldPerson));
-        //todo calculate Task async
-        return taskMapper.toDto(task);
+        var taskDto = taskMapper.toDto(task);
+        eventPublisher.publishEvent(taskDto);
+        return taskDto;
     }
 
     @Override
@@ -41,15 +44,15 @@ class TaskService implements TaskFacade{
 
     Page<TaskDto> getAllTasks(Pageable pageable, UUID personId) {
         if (personId != null) {
-            return repository.findByPersonId(personId, pageable)
+            return repository.findByPersonIdWithComparableObjects(personId, pageable)
                     .map(taskMapper::toDto);
         }
-        return repository.findAll(pageable)
+        return repository.findAllWithComparableObjects(pageable)
                 .map(taskMapper::toDto);
     }
 
     TaskDto getTaskById(UUID id) {
-        return repository.findById(id)
+        return repository.findByIdWithComparableObjects(id)
                 .map(taskMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(TASK, id));
     }

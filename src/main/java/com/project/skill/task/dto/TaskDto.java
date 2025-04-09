@@ -1,17 +1,13 @@
 package com.project.skill.task.dto;
 
-import com.project.skill.task.Classification;
-
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 public record TaskDto(
         UUID id,
         UUID personId,
-        Classification classification,
-        ComparableObjectDto oldValues,
-        ComparableObjectDto newValues,
-        Double similarityPercentage,
+        Set<ComparableObjectDto> comparableObjects,
         Double progressStatusPercentage,
         Instant createdAt
 ) {

@@ -15,4 +15,4 @@ spring:
 
 logging:
   level:
-    com.example.skill: debug
+    com.project.skill: debug

@@ -1,22 +1,24 @@
 package com.project.skill.task;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,34 +35,12 @@ class Task {
     @Column(nullable = false)
     private UUID personId;
 
-    @Enumerated(EnumType.STRING)
-    private Classification classification;
 
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "name", column = @Column(name = "old_name")),
-            @AttributeOverride(name = "surname", column = @Column(name = "old_surname")),
-            @AttributeOverride(name = "company", column = @Column(name = "old_company")),
-            @AttributeOverride(name = "birthDate", column = @Column(name = "old_birth_date"))
-    })
-    private ComparableObject oldValues;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "name", column = @Column(name = "new_name")),
-            @AttributeOverride(name = "surname", column = @Column(name = "new_surname")),
-            @AttributeOverride(name = "company", column = @Column(name = "new_company")),
-            @AttributeOverride(name = "birthDate", column = @Column(name = "new_birth_date"))
-    })
-    private ComparableObject newValues;
-
-    /**
-     * Represents the similarity between the old and new values as a percentage.
-     * Expected format: Double value in the range 0.0 - 100.0,
-     * where 85.5 means 85.5% similarity.
-     */
-    private Double similarityPercentage;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "task_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<ComparableObject> comparableObjects;
 
     /**
      * Represents the progress status as a percentage.
