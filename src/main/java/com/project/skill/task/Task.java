@@ -1,27 +1,20 @@
 package com.project.skill.task;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.Set;
-import java.util.UUID;
+import java.util.List;
 
-@Entity
+@Document(collection = "tasks")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,18 +22,12 @@ import java.util.UUID;
 class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
-    @Column(nullable = false)
-    private UUID personId;
+    @Indexed
+    private String personId;
 
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "task_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<ComparableObject> comparableObjects;
+    private List<ComparableObject> comparableObjects;
 
     /**
      * Represents the progress status as a percentage.
@@ -49,6 +36,6 @@ class Task {
      */
     private Double progressStatusPercentage;
 
-    @CreationTimestamp
+    @CreatedDate
     private Instant createdAt;
 }

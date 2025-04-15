@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 class TaskProcessor {
 
     private final TaskCacheService taskCacheService;
-    private final ComparableObjectRepository comparableObjectRepository;
+    private final TaskRepository taskRepository;
     private final TimeHelper timeHelper;
 
     @EventListener
@@ -30,7 +30,7 @@ class TaskProcessor {
             var similarity = calculateSimilarity(comparable.previousValue(), comparable.newValue());
             var similarityPercentage = similarity * 100.0;
             var classification = getClassificationBySimilarity(similarity);
-            comparableObjectRepository.updateClassificationAndSimilarity(comparable.id(), classification, similarityPercentage);
+            taskRepository.updateComparableObjectInTask(taskDto.id(), comparable.id(), classification, similarityPercentage);
         }
     }
 

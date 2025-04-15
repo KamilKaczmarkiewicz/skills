@@ -46,19 +46,16 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapStruictVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapStruictVersion}"
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly "org.flywaydb:flyway-database-postgresql"
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
-    testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
+    testImplementation "org.testcontainers:mongodb:${testcontainersVersion}"
 }
 
 tasks.named('test') {

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/persons")
@@ -46,17 +45,17 @@ class PersonController {
     }
 
     @GetMapping("/{id}")
-    PersonDto getPersonById(@PathVariable UUID id){
+    PersonDto getPersonById(@PathVariable String id){
         return personService.getPersonById(id);
     }
 
     @PutMapping("/{id}")
-    PersonWithTaskResponse updatePerson(@PathVariable UUID id, @Valid @RequestBody CreatePersonRequest request){
+    PersonWithTaskResponse updatePerson(@PathVariable String id, @Valid @RequestBody CreatePersonRequest request){
         return personService.updatePerson(id, request);
     }
 
     @DeleteMapping("/{id}")
-    DeletePersonResponse deletePerson(@PathVariable UUID id){
+    DeletePersonResponse deletePerson(@PathVariable String id){
         return personService.deletePerson(id);
     }
 }

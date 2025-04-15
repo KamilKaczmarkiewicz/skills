@@ -16,9 +16,9 @@ import static org.mockito.Mockito.mock;
 class TaskProcessorTest {
 
     private final TaskCacheService taskCacheService = mock(TaskCacheService.class);
-    private final ComparableObjectRepository comparableObjectRepository = mock(ComparableObjectRepository.class);
+    private final TaskRepository taskRepository = mock(TaskRepository.class);
     private final TimeHelper timeHelper = new TestTimeHelper();
-    private final TaskProcessor calculator = new TaskProcessor(taskCacheService, comparableObjectRepository,timeHelper);
+    private final TaskProcessor calculator = new TaskProcessor(taskCacheService, taskRepository, timeHelper);
 
     static Stream<Arguments> similarityData() {
         return Stream.of(
@@ -28,13 +28,6 @@ class TaskProcessorTest {
                 Arguments.of("ABCABC", "ABC", 0.5),
                 Arguments.of("ABCDEFGH", "TDD", 0.125)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("similarityData")
-    void testCalculateSimilarity(String source, String target, double expected) {
-        double similarity = calculator.calculateSimilarity(source, target);
-        assertEquals(expected, similarity, 0.0001);
     }
 
     static Stream<Arguments> classificationData() {
@@ -48,6 +41,13 @@ class TaskProcessorTest {
                 Arguments.of(0.1, Classification.LOW),
                 Arguments.of(0.0, Classification.LOW)
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("similarityData")
+    void testCalculateSimilarity(String source, String target, double expected) {
+        double similarity = calculator.calculateSimilarity(source, target);
+        assertEquals(expected, similarity, 0.0001);
     }
 
     @ParameterizedTest

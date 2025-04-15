@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
 
 import static com.project.skill.common.exception.NotFoundException.ObjectType.PERSON;
 
@@ -41,15 +40,15 @@ class PersonService {
                 .map(personMapper::toDto);
     }
 
-    PersonDto getPersonById(UUID id) {
+    PersonDto getPersonById(String id) {
         return repository.findById(id)
                 .map(personMapper::toDto)
                 .orElseThrow(() -> createNotFoundException(id));
     }
 
     @Transactional
-    PersonWithTaskResponse updatePerson(UUID id, CreatePersonRequest request) {
-        var existingPerson = repository.findByIdWithLock(id)
+    PersonWithTaskResponse updatePerson(String id, CreatePersonRequest request) {
+        var existingPerson = repository.findById(id)
                 .orElseThrow(() -> createNotFoundException(id));
         var oldPersonDto = personMapper.toDto(existingPerson);
         personMapper.updatePersonFromDto(request, existingPerson);
@@ -59,13 +58,13 @@ class PersonService {
         return new PersonWithTaskResponse(newPersonDto, task.id());
     }
 
-    private NotFoundException createNotFoundException(UUID id) {
+    private NotFoundException createNotFoundException(String id) {
         return new NotFoundException(PERSON, id);
     }
 
     @Transactional
-    DeletePersonResponse deletePerson(UUID id) {
-        var person = repository.findByIdWithLock(id)
+    DeletePersonResponse deletePerson(String id) {
+        var person = repository.findById(id)
                 .orElseThrow(() -> createNotFoundException(id));
         var task = taskFacade.createTaskForDeletedPerson(personMapper.toDto(person));
         repository.delete(person);

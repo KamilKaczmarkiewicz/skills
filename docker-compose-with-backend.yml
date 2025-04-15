@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-  postgres:
-    image: postgres:16.0-alpine
+  mongo:
+    image: mongo:latest
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: skilldb
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: skilldb
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mongo_data:/data/db
 
   redis:
     image: redis:7.2-alpine
@@ -22,15 +22,14 @@ services:
     build:
       context: .
     depends_on:
-      - postgres
+      - mongo
       - redis
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skilldb
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATA_MONGODB_URI: mongodb://user:password@mongo:27017/$skilldb?authSource=admin
       SPRING_REDIS_HOST: redis
 
 volumes:
-  postgres_data:
+  mongo_data:
+    driver: local

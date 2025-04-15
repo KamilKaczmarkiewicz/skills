@@ -1,32 +1,27 @@
 package com.project.skill.person;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-@Entity
+@Document(collection = "persons")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 class Person {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String surname;
 
-    @Column(nullable = false)
     private String company;
 
-    @Column(nullable = false)
     private LocalDate birthDate;
 }

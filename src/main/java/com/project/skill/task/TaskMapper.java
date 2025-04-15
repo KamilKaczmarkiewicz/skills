@@ -5,7 +5,7 @@ import com.project.skill.task.dto.TaskDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.Set;
+import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface TaskMapper {
@@ -18,7 +18,7 @@ interface TaskMapper {
         }
         return Task.builder()
                 .personId(newPerson.id())
-                .comparableObjects(Set.of(
+                .comparableObjects(List.of(
                         newComparableObject(FieldName.NAME, newPerson.name()),
                         newComparableObject(FieldName.SURNAME, newPerson.surname()),
                         newComparableObject(FieldName.COMPANY, newPerson.company()),
@@ -28,7 +28,7 @@ interface TaskMapper {
                 .build();
     }
 
-    private ComparableObject newComparableObject(FieldName fieldName, String newValue){
+    private ComparableObject newComparableObject(FieldName fieldName, String newValue) {
         return ComparableObject.builder()
                 .fieldName(fieldName)
                 .newValue(newValue)
@@ -42,7 +42,7 @@ interface TaskMapper {
         }
         return Task.builder()
                 .personId(person.id())
-                .comparableObjects(Set.of(
+                .comparableObjects(List.of(
                         newDeletedComparableObject(FieldName.NAME, person.name()),
                         newDeletedComparableObject(FieldName.SURNAME, person.surname()),
                         newDeletedComparableObject(FieldName.COMPANY, person.company()),
@@ -52,7 +52,7 @@ interface TaskMapper {
                 .build();
     }
 
-    private ComparableObject newDeletedComparableObject(FieldName fieldName, String previousValue){
+    private ComparableObject newDeletedComparableObject(FieldName fieldName, String previousValue) {
         return ComparableObject.builder()
                 .fieldName(fieldName)
                 .previousValue(previousValue)
@@ -66,7 +66,7 @@ interface TaskMapper {
         }
         return Task.builder()
                 .personId(newPerson.id())
-                .comparableObjects(Set.of(
+                .comparableObjects(List.of(
                         newComparableObject(FieldName.NAME, oldPerson.name(), newPerson.name()),
                         newComparableObject(FieldName.SURNAME, oldPerson.surname(), newPerson.surname()),
                         newComparableObject(FieldName.COMPANY, oldPerson.company(), newPerson.company()),
@@ -76,7 +76,7 @@ interface TaskMapper {
                 .build();
     }
 
-    private ComparableObject newComparableObject(FieldName fieldName, String previousValue, String newValue){
+    private ComparableObject newComparableObject(FieldName fieldName, String previousValue, String newValue) {
         return ComparableObject.builder()
                 .fieldName(fieldName)
                 .previousValue(previousValue)

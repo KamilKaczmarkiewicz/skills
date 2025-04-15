@@ -3,9 +3,12 @@ package com.project.skill.common.exception;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
 
-public class NotFoundException extends RuntimeException{
+public class NotFoundException extends RuntimeException {
+
+    public NotFoundException(ObjectType type, String id) {
+        super("%s with id: %s not found.".formatted(type.value, id));
+    }
 
     @Getter
     @RequiredArgsConstructor
@@ -13,9 +16,5 @@ public class NotFoundException extends RuntimeException{
         TASK("Task"),
         PERSON("Person");
         private final String value;
-    }
-
-    public NotFoundException(ObjectType type, UUID id) {
-        super("%s with id: %s not found.".formatted(type.value, id));
     }
 }

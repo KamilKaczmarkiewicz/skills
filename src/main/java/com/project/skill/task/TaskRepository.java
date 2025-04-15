@@ -1,36 +1,27 @@
 package com.project.skill.task;
 
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
+
 @Repository
-interface TaskRepository extends JpaRepository<Task, UUID> {
+interface TaskRepository extends MongoRepository<Task, String> {
 
-    @Query("SELECT t FROM Task t LEFT JOIN FETCH t.comparableObjects WHERE t.id = :id")
-    Optional<Task> findByIdWithComparableObjects(UUID id);
+    Page<Task> findByPersonId(String personId, Pageable pageable);
 
-    @Query(
-            value = "SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.comparableObjects WHERE t.personId = :personId",
-            countQuery = "SELECT COUNT(t) FROM Task t WHERE t.personId = :personId"
-    )
-    Page<Task> findByPersonIdWithComparableObjects(UUID personId, Pageable pageable);
+    @Query("{ 'id' : ?0 }")
+    @Update("{ '$set' : { 'progressStatusPercentage' : ?1 } }")
+    void updateProgress(String taskId, Double progress);
 
-    @Query(
-            value = "SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.comparableObjects",
-            countQuery = "SELECT COUNT(t) FROM Task t"
-    )
-    Page<Task> findAllWithComparableObjects(Pageable pageable);
+    @Query("{ 'id': ?0, 'comparableObjects.id': ?1 }")
+    @Update("{ '$set': { 'comparableObjects.$.classification': ?2, 'comparableObjects.$.similarityPercentage': ?3 } }")
+    void updateComparableObjectInTask(String taskId, UUID comparableString, Classification classification, Double similarityPercentage);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Task t SET t.progressStatusPercentage = :progress WHERE t.id = :taskId")
-    void updateProgress(UUID taskId, Double progress);
 }

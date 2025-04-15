@@ -1,23 +1,14 @@
 spring:
   application:
     name: skill
-  datasource:
-    url: jdbc:postgresql://localhost:5432/skilldb
-    username: ${SPRING_DATASOURCE_USERNAME:user}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-    show-sql: true
   cache:
     type: redis
   data:
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
       port: 6379
-  flyway:
-    locations: classpath:db/changelog/postgres
+    mongodb:
+      uri: mongodb://${MONGO_USER:user}:${MONGO_PASSWORD:password}@localhost:27017/${MONGO_DATABASE:skilldb}?authSource=admin
 
 logging:
   level:
