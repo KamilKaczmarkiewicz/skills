@@ -16,6 +16,16 @@ services:
     restart: always
     ports:
       - "6379:6379"
+  jaeger:
+    image: jaegertracing/all-in-one:latest # Obraz zawiera kolektor, agenta, zapytania i UI
+    container_name: jaeger
+    ports:
+      - "6831:6831/udp"  # Agent Jaeger (dla starszych klientów Jaeger)
+      - "16686:16686"    # Interfejs użytkownika Jaeger
+      - "4317:4317"      # Kolektor OTLP gRPC
+      - "4318:4318"      # Kolektor OTLP HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true # Włącz odbieranie danych OTLP
 
 
 volumes:

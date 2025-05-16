@@ -2,6 +2,7 @@ package com.project.skill.task;
 
 import com.project.skill.common.TimeHelper;
 import com.project.skill.task.dto.TaskDto;
+import com.project.skill.task.events.TaskUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -19,6 +20,12 @@ class TaskProcessor {
 
     @EventListener
     @Async
+    void handleTaskUpdateEvent(TaskUpdateEvent taskUpdateEvent) {
+        try(var scope = taskUpdateEvent.propagatedContext().makeCurrent()) {
+            calculateTaskSimilarity(taskUpdateEvent.taskDto());
+        }
+    }
+
     void calculateTaskSimilarity(TaskDto taskDto) {
         log.info("Start calculateTaskSimilarity for taskId: {}", taskDto.id());
         var steps = 5;

@@ -9,7 +9,7 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
-    show-sql: true
+    show-sql: false
   cache:
     type: redis
   data:
@@ -20,5 +20,25 @@ spring:
     locations: classpath:db/changelog/postgres
 
 logging:
+  pattern:
+    correlation: "[ %X{trace_id:-},%X{span_id:-} ] "
   level:
     com.project.skill: debug
+
+otel:
+  service:
+    name: moja-usluga-otel
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318
+  traces:
+    exporter: otlp
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
+  propagators: tracecontext,baggage
+  resource:
+    attributes:
+      environment: staging
+      custom.attribute: wartosc_atrybutu

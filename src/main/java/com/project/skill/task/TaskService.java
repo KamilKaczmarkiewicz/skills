@@ -4,6 +4,8 @@ import com.project.skill.common.TimeHelper;
 import com.project.skill.common.exception.NotFoundException;
 import com.project.skill.person.dto.PersonDto;
 import com.project.skill.task.dto.TaskDto;
+import com.project.skill.task.events.TaskUpdateEvent;
+import io.opentelemetry.context.Context;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,7 +37,8 @@ class TaskService implements TaskFacade {
     public TaskDto createTaskForUpdatedPerson(PersonDto newPerson, PersonDto oldPerson) {
         var task = repository.save(taskMapper.toTask(newPerson, oldPerson));
         var taskDto = taskMapper.toDto(task);
-        eventPublisher.publishEvent(taskDto);
+        var propagatedContext = Context.current();
+        eventPublisher.publishEvent(new TaskUpdateEvent(taskDto, propagatedContext));
         return taskDto;
     }
 

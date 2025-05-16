@@ -49,6 +49,7 @@ class PersonService {
 
     @Transactional
     PersonWithTaskResponse updatePerson(UUID id, CreatePersonRequest request) {
+        log.debug("Updating person with id: {}", id);
         var existingPerson = repository.findByIdWithLock(id)
                 .orElseThrow(() -> createNotFoundException(id));
         var oldPersonDto = personMapper.toDto(existingPerson);
